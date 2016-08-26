@@ -1,0 +1,32 @@
+$header-height: 131px;
+.header{
+  height: $header-height;
+  max-height: $header-height;
+  background-color: #fff;
+  padding:0px;
+  .header-logo-full{
+    margin: 15px 25px;
+    float:left;
+  }
+  a.header-donate-link {
+    background-color: $color-orange;
+    height: $header-height - 53px;
+    color: #fff;
+
+    width:172px;
+    float:right;
+    display:block;
+    padding-top:53px;
+    text-align: center;
+
+    @include typeface-ubuntu-bold;
+    letter-spacing: .15em;
+    font-size: 13px;
+    text-decoration: none;
+    text-transform: uppercase;
+
+    &:hover {
+      background-color: $color-brand-orange-light;
+    }
+  }
+}

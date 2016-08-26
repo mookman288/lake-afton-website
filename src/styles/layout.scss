@@ -1,0 +1,15 @@
+$hero-height: 768px;
+
+div.hero{
+  height: $hero-height;
+  background: #fff url('/images/video_overlay.png') right center;
+  background-size: cover;
+
+}
+div.hero-content {
+  height: $hero-height;
+  display:table-cell;
+  width: 100%;
+  vertical-align: middle;
+  text-align: center;
+}

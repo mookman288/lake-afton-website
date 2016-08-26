@@ -1,0 +1,64 @@
+.hero {
+  .hero-content {
+    color:#fff;
+    text-align: center;
+
+    .hero-title {
+      @include typeface-industry;
+      font-weight: 400;
+      font-size: 48px;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 0px;
+    }
+
+    .hero-body {
+      margin:0px 0px 40px 0px;
+      @include typeface-ubuntu-light;
+      font-size: 18px;
+      padding: 0px 25%;
+      line-height: 1.45em;
+    }
+    a.hero-cta {
+      color: #fff;
+      @include typeface-ubuntu-medium;
+      padding:  13px 17px;
+      border: 2px solid $color-brand-orange-light;
+      text-transform: uppercase;
+      text-decoration: none;
+      display:inline-block;
+      font-size: 14px;
+      letter-spacing: .25em;
+      &:hover{
+        background-color: $color-brand-orange-light;
+      }
+    }
+  }
+}
+
+.next-viewing-container {
+  background-color: $color-brand-purple;
+  height: 89px;
+  text-align:center;
+  span {
+    position:relative;
+    top: 30px;
+  }
+  .next-viewing-label, .next-viewing-date {
+    @include typeface-ubuntu-light;
+    font-size:22px;
+  }
+  .next-viewing-label {
+    color: #b7b7b7;
+  }
+  .next-viewing-date {
+    color: #fff;
+  }
+  .next-viewing-cta {
+    color: $color-brand-orange;
+    @include typeface-ubuntu-light;
+    font-size:14px;
+    margin-left: 10px;
+    top: 28px;
+  }
+}

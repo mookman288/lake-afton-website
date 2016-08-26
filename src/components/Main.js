@@ -1,18 +1,13 @@
 require('normalize.css/normalize.css');
-require('styles/App.css');
+require('styles/app.scss');
 
-import React from 'react';
+// import React from 'react';
 
-class AppComponent extends React.Component {
-  render() {
-    return (
-      <div className="index">
-      </div>
-    );
-  }
-}
-
-AppComponent.defaultProps = {
-};
-
-export default AppComponent;
+// class AppComponent extends React.Component {
+//
+// }
+//
+// AppComponent.defaultProps = {
+// };
+//
+// export default AppComponent;

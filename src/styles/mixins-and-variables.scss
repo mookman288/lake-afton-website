@@ -1,0 +1,36 @@
+@mixin typeface-ubuntu {
+  font-family: 'Ubuntu', sans-serif !important;
+}
+
+@mixin typeface-ubuntu-light{
+  @include typeface-ubuntu;
+  font-weight: 300;
+}
+
+@mixin typeface-ubuntu-regular{
+  @include typeface-ubuntu;
+  font-weight: 400;
+}
+
+@mixin typeface-ubuntu-medium{
+  @include typeface-ubuntu;
+  font-weight: 500;
+}
+
+@mixin typeface-ubuntu-bold{
+  @include typeface-ubuntu;
+  font-weight: 700;
+}
+
+
+@mixin typeface-industry {
+  font-family: 'industry-inc-base', sans-serif !important;
+}
+
+$color-brand-blue: rgb(89,203,232);
+
+$color-brand-orange: rgb(224,60,49);
+$color-brand-orange-light: #E6635A;
+
+$color-brand-purple: rgb(70,30,61);
+$color-orange: #E03C31;
