@@ -1,7 +1,7 @@
 {
   "private": true,
   "version": "0.0.1",
-  "description": "Publis Site for Lake Afton Public Observatory",
+  "description": "Public Site for Lake Afton Public Observatory",
   "main": "",
   "scripts": {
     "clean": "rimraf dist/*",
