@@ -1,141 +1,207 @@
-module.exports = function (grunt) {
-  'use strict';
+/*global module:false*/
+module.exports = function(grunt) {
+	'use strict';
 
-  // Force use of Unix newlines
-  grunt.util.linefeed = '\n';
+    // Force use of Unix newlines
+    grunt.util.linefeed = '\n';
 
-  RegExp.quote = function (string) {
-    return string.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&');
-  };
+    RegExp.quote = function (string) {
+      return string.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&');
+    };
 
-  var fs = require('fs');
-  var path = require('path');
+    //var fs = require('fs');
+    //var path = require('path');
 
-  // Project configuration.
-  grunt.initConfig({
-    // Metadata.
-    pkg: grunt.file.readJSON('package.json'),
+	// Project configuration.
+	grunt.initConfig({
+		// Metadata.
+		pkg: grunt.file.readJSON('package.json'),
+		banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+		production_files: ["dist/**"],
 
-    // Task configuration.
-    clean: {
-      dist: 'dist'
-    },
+		// Task configuration.
+	    clean: {
+	      dist: ['dist']
+	    },
 
-    concat: {
-      options: {
-        // Custom function to remove all export and import statements
-        process: function (src) {
-          return src.replace(/^(export|import).*/gm, '');
-        },
-        stripBanners: false
-      },
-      bootstrap: {
-        src: [
+		copy: {
+			content: {
+				expand: true,
+				cwd: 'src/content',
+				src: '**',
+				dest: 'dist/content/'
+			},
+			svg: {
+				expand: true,
+				cwd: 'src/img/',
+				src: '*.svg',
+				dest: 'dist/img/'
+			}
+		},
 
-        ],
-        dest: 'dist/js/<%= pkg.name %>.js'
-      }
-    },
+		/*
+		concat: {
+			htaccess: {
+				src: ['src/htaccess/head.htaccess', 'src/htaccess/config.htaccess', 'src/htaccess/oldpages.htaccess', 'src/htaccess/staticfiles.htaccess', 'src/htaccess/external.htaccess', 'src/htaccess/rewrites.htaccess'],
+				dest: '.htaccess'
+			}
+		},
+		*/
 
-    uglify: {
-      options: {
-        compress: {
-          warnings: false
-        },
-        mangle: true,
-        preserveComments: /^!|@preserve|@license|@cc_on/i
-      },
-      core: {
-        src: '<%= concat.bootstrap.dest %>',
-        dest: 'dist/js/<%= pkg.name %>.min.js'
-      }
-    },
+		uglify: {
+			options: {
+				//banner: '<%= banner %>'
+			},
+			app: {
+				src: ['src/js/vendor/jquery.min.js', 'node_modules/bootstrap/dist/js/bootstrap.js', 'src/js/vendor/pace.js', 'src/js/main.js'],
+				dest: 'dist/js/app.min.js'
+			}
+		},
 
-    // CSS build configuration
-    scsslint: {
-      options: {
-        bundleExec: true,
-        config: 'scss/.scss-lint.yml',
-        reporterOutput: null
-      },
-      core: {
-        src: ['scss/*.scss', '!scss/_normalize.scss']
-      }
-    },
+		sass: {
+			app: {
+				options: {
+					style: 'compressed'
+				},
+				src: 'src/scss/app.scss',
+				dest: 'dist/css/app.min.css'
+			}
+		},
 
-    cssmin: {
-      options: {
-        // TODO: disable `zeroUnits` optimization once clean-css 3.2 is released
-        //    and then simplify the fix for https://github.com/twbs/bootstrap/issues/14837 accordingly
-        compatibility: 'ie9',
-        keepSpecialComments: '*',
-        sourceMap: true,
-        advanced: false
-      },
-      core: {
-        files: [
-          {
-            expand: true,
-            cwd: 'dist/css',
-            src: ['*.css', '!*.min.css'],
-            dest: 'dist/css',
-            ext: '.min.css'
-          }
-        ]
-      }
-    },
+		jshint: {
+			options: {
+				curly: true,
+				eqeqeq: true,
+				immed: false,
+				latedef: true,
+				newcap: false,
+				noarg: true,
+				sub: false,
+				undef: true,
+				unused: true,
+				boss: true,
+				eqnull: true,
+				browser: true,
+				globals: {
+					process: true,
+					"$": false,
+					"console": false,
+					"ga": false
+				}
+			},
+			gruntfile: {
+				src: 'Gruntfile.js'
+			},
+			main: {
+				src: 'src/js/main.js'
+			}
+		},
 
-	sass: {
-      options: {
-        includePaths: ['scss'],
-        precision: 6,
-        sourceComments: false,
-        sourceMap: true,
-        outputStyle: 'expanded'
-      },
-      core: {
-        files: {
-          'dist/css/styles.css': 'src/scss/styles.scss'
-        }
-      }
-  	},
+		img: {
+	        main: {
+	            src: ['src/img/**'],
+	            dest: 'dist/img'
+	        }
+	    },
 
-    watch: {
-      sass: {
-        files: 'src/scss/**/*.scss',
-        tasks: ['dist-css']
-      }
-    },
-  });
+		watch: {
+			gruntfile: {
+				files: '<%= jshint.gruntfile.src %>',
+				tasks: ['jshint:gruntfile']
+			},
+			mainJS: {
+				files: ['<%= uglify.app.src %>'],
+				tasks: ['jshint:main','uglify:app']
+			},
+			content: {
+				files: ['src/content/**'],
+				tasks: ['copy:content']
+			},
+			sass: {
+				files: 'src/scss/**',
+				tasks: ['sass:app']
+			},
+			/*htaccess: {
+				files: ['<%= concat.htaccess.src %>'],
+				tasks: ['concat:htaccess']
+			},*/
+			img: {
+				files: 'src/img/**',
+				tasks: ['img:main']
+			}
+		}
 
-  // These plugins provide necessary tasks.
-  require('load-grunt-tasks')(grunt, { scope: 'devDependencies',
-    // Exclude Sass compilers. We choose the one to load later on.
-    pattern: ['grunt-*', '!grunt-contrib-sass'] });
-  require('time-grunt')(grunt);
+		/*
+		realFavicon: {
+			favicons: {
+				src: 'src/favicon/favicon.svg',
+				dest: 'dist/favicon/',
+				options: {
+					iconsPath: 'dist/favicon/',
+					html: [ 'dist/template/favicon-meta-tags.html' ],
+					design: {
+						ios: {
+							pictureAspect: 'backgroundAndMargin',
+							backgroundColor: '#ffffff',
+							margin: '28%',
+							appName: 'Lake Afton Public Observatory'
+						},
+						desktopBrowser: {},
+						windows: {
+							masterPicture: {
+								type: 'inline',
+								content: 'dist/favicon/favicon-transparent.svg'
+							},
+							// dedicated_picture: 'dist/favicon/favicon-transparent.svg',
+							pictureAspect: 'whiteSilhouette',
+							backgroundColor: '#2d89ef',
+							onConflict: 'override',
+							appName: 'Lake Afton Public Observatory'
+						},
+						androidChrome: {
+							pictureAspect: 'shadow',
+							themeColor: '#268bd2',
+							manifest: {
+								name: 'Lake Afton Public Observatory',
+								startUrl: 'http://www.lakeafton.com',
+								display: 'browser', //other option: 'standalone',
+								orientation: 'notSet',
+								onConflict: 'override'
+							}
+						},
+						safariPinnedTab: {
+							masterPicture: {
+								type: 'inline',
+								content: 'dist/favicon/favicon-transparent.svg'
+							},
+							// dedicated_picture: 'dist/favicon/favicon-transparent.svg',
+							pictureAspect: 'silhouette',
+							themeColor: '#268bd2'
+						}
+					},
+					settings: {
+						compression: 2,
+						scalingAlgorithm: 'Mitchell',
+						errorOnImageTooSmall: false
+					},
+					versioning: true
+				}
+			}
+		}
+		*/
+	});
 
-  var runSubset = function (subset) {
-    return !process.env.TWBS_TEST || process.env.TWBS_TEST === subset;
-  };
-  var isUndefOrNonZero = function (val) {
-    return val === undefined || val !== '0';
-  };
+	// These plugins provide necessary tasks.
+	grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-contrib-clean');
+	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-contrib-sass');
+	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-contrib-copy');
+	//grunt.loadNpmTasks('grunt-real-favicon');
+	grunt.loadNpmTasks('grunt-img');
 
-  // JS distribution task.
-  grunt.registerTask('dist-js', ['babel:dev', 'concat', 'babel:dist', 'stamp', 'uglify:core']);
-
-  grunt.registerTask('test-scss', ['scsslint:core']);
-
-  // grunt.registerTask('sass-compile', ['sass:core', 'sass:extras', 'sass:docs']);
-  grunt.registerTask('sass-compile', ['sass:core']);
-
-  grunt.registerTask('dist-css', ['sass-compile', 'exec:postcss', 'cssmin:core']);
-
-  // Full distribution task.
-  grunt.registerTask('dist', ['clean:dist', 'dist-css', 'dist-js']);
-
-  // Default task.
-  grunt.registerTask('default', ['clean:dist', 'test']);
-
-  grunt.registerTask('prep-release', ['dist', 'docs', 'docs-github', 'compress']);
+	// Default task.
+	grunt.registerTask('default', ['jshint', 'uglify', 'sass', 'img', 'copy']);
 };
