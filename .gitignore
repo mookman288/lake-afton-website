@@ -41,5 +41,15 @@ bower.json
 # Ignore Byebug command history file.
 .byebug_history
 
-# node.js
-/node_modules
+# Environment #
+###############
+node_modules
+bower_components
+.sass-cache
+*.LCK
+*.sublime-project
+*.sublime-workspace
+sftp-config.json
+sftp-config.json.bak
+sftp-dev.json
+.remote-sync.json
